@@ -20,7 +20,7 @@ public class CorsoDAO {
 		List<Corso> result = new ArrayList<>();
 		
 		try {
-			Connection conn = DBconnect.getConnection();
+			Connection conn = Database.getInstance().getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setInt(1, periodo);
 			ResultSet rs = st.executeQuery();
@@ -44,7 +44,7 @@ public class CorsoDAO {
 		Map<Corso, Integer> result = new HashMap<Corso, Integer>();
 		
 		try {
-			Connection conn = DBconnect.getConnection();
+			Connection conn = Database.getInstance().getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setInt(1, pd);
 			ResultSet rs = st.executeQuery();
