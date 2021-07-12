@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import it.polito.tdp.corsi.model.Corso;
 import it.polito.tdp.corsi.model.Model;
+import it.polito.tdp.corsi.model.Studente;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -77,10 +78,20 @@ public class FXMLController {
     	}
     	
     	List<Corso> corsi = model.getCorsiPerPeriodo(pd);
+    	/*
     	for (Corso corso: corsi ) {
     		txtRisultato.appendText(corso.getNome() + "\n");
     	}
-    	
+    	*/
+    	txtRisultato.setStyle("-fx-font-family: monospace");
+    	StringBuilder sb = new StringBuilder();
+    	for (Corso c: corsi ) {
+    		sb.append(String.format("%-8s  ", c.getCodins()));
+    		sb.append(String.format("%-4d  ", c.getCrediti()));
+    		sb.append(String.format("%-50s ", c.getNome()));
+    		sb.append(String.format("%-4d\n", c.getPd()));
+    	}
+    	txtRisultato.appendText(sb.toString());
     }
 
     @FXML
@@ -110,23 +121,61 @@ public class FXMLController {
     		return;
     	}
     	
+    	StringBuilder sb = new StringBuilder();
+    	txtRisultato.setStyle("-fx-font-family: monospace");
+    	
     	Map<Corso, Integer> corsoIscrizioni = model.getIscrittiPerPeriodo(pd);
     	for(Corso c: corsoIscrizioni.keySet()) {
-    		txtRisultato.appendText(c.toString());
+    		sb.append(String.format("%-8s  ", c.getCodins()));
+    		sb.append(String.format("%-4d  ", c.getCrediti()));
+    		sb.append(String.format("%-50s ", c.getNome()));
+    		sb.append(String.format("%-4d ", c.getPd()));
     		Integer n = corsoIscrizioni.get(c);
-    		txtRisultato.appendText("\t"+n+"\n");
+    		sb.append(String.format("%-4d\n", n));
+    		
     	}
-
+    	txtRisultato.appendText(sb.toString());
     }
 
     @FXML
     void stampaDivisione(ActionEvent event) {
-
+    	txtRisultato.clear();
+    	
+    	String codiceCorso = txtCorso.getText();
+    	
+    	if(!model.esisteCorso(codiceCorso)) {
+    		txtRisultato.appendText("Il corso inserito non esiste!");
+    		return;
+    	}
+    	
+    	Map<String,Integer> divisione = model.getDivisioneCDS(codiceCorso);
+    	
+    	for(String cds : divisione.keySet()) {
+    		txtRisultato.appendText(cds + " " + divisione.get(cds) + "\n");
+    	}
     }
 
     @FXML
     void stampaStudenti(ActionEvent event) {
-
+    	txtRisultato.clear();
+    	
+    	String codiceCorso = txtCorso.getText();
+    	
+    	if(!model.esisteCorso(codiceCorso)) {
+    		txtRisultato.appendText("Il corso inserito non esiste!");
+    		return;
+    	}
+    	
+    	List<Studente> studenti = model.getStudentiByCorso(codiceCorso);
+    	
+    	if(studenti.size() == 0 ) {
+    		txtRisultato.appendText("il corso inserito non ha iscritti!");
+    		return;
+    	}
+    	
+    	for(Studente s : studenti) {
+    		txtRisultato.appendText(s + "\n");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
